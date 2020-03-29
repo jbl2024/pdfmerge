@@ -202,15 +202,6 @@ public class PdfService {
 		PDPage page = doc.getPage(0);
 		PDImageXObject pdImage = PDImageXObject.createFromFileByContent(image, doc);
 
-		try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.APPEND, true, true)) {
-			// contentStream.drawImage(ximage, 20, 20 );
-			// better method inspired by http://stackoverflow.com/a/22318681/535646
-			// reduce this value if the image is too large
-			float scale = 1f;
-			contentStream.drawImage(pdImage, 20, 20, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
-		}
-
-		
 		PDPageContentStream contentStream = new PDPageContentStream(doc, page);
 
 		// scale image
