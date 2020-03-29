@@ -1,9 +1,15 @@
 package fr.edu.lyon.pdfmerge.storage.controllers;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.tika.exception.TikaException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +24,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import fr.edu.lyon.pdfmerge.storage.commons.FileResponse;
+import fr.edu.lyon.pdfmerge.pdf.services.PdfService;
 import fr.edu.lyon.pdfmerge.storage.services.StorageService;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/files")
+@Slf4j
 public class FileController {
 
 	private StorageService storageService;
+
+	@Autowired
+	PdfService pdfService;
 
 	public FileController(StorageService storageService) {
 		this.storageService = storageService;
@@ -67,10 +78,27 @@ public class FileController {
 		}
 		return "redirect:/files/";
 	}
-	
+
 	@PostMapping("/merge")
-	public String merge() {
-		return "redirect:/files/";
+	@ResponseBody
+	public ResponseEntity<Resource> merge() throws IOException, TikaException {
+		List<InputStream> items = new ArrayList<InputStream>();
+		storageService.loadAll().forEach(path -> {
+			try {
+				items.add(Files.newInputStream(storageService.load(path.toString())));
+			} catch (IOException e) {
+				log.error("cannot load file", e);
+			}
+		});
+		
+		String filename = "output.pdf";
+		
+		InputStream mergedPdf = pdfService.merge(pdfService.normalizeSources(items));
+		InputStreamResource resource = new InputStreamResource(mergedPdf);
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+				.body(resource);
+		
 	}
-	
+
 }
