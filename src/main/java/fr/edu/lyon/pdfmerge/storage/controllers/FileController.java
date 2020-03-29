@@ -1,5 +1,6 @@
 package fr.edu.lyon.pdfmerge.storage.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -82,13 +83,9 @@ public class FileController {
 	@PostMapping("/merge")
 	@ResponseBody
 	public ResponseEntity<Resource> merge() throws IOException, TikaException {
-		List<InputStream> items = new ArrayList<InputStream>();
+		List<File> items = new ArrayList<File>();
 		storageService.loadAll().forEach(path -> {
-			try {
-				items.add(Files.newInputStream(storageService.load(path.toString())));
-			} catch (IOException e) {
-				log.error("cannot load file", e);
-			}
+			items.add(storageService.load(path.toString()).toFile());
 		});
 		
 		String filename = "output.pdf";
