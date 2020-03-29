@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Merge pdf</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/wingcss"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+
+<body>
+
+<div class="typeset">
+
+	<h1>Merge pdf</h1>
+	
+<div class="row">
+
+  <div class="col">
+	<h4>Upload Single File:</h4>
+	<form method="POST" enctype="multipart/form-data" th:action="@{/files/upload-file}">
+	    <input type="file" name="file"> <br/><br/>
+	    <button type="submit">Submit</button>
+	</form>
+  </div>
+  <div class="col">
+	<h4>Upload Multiple Files:</h4>
+	<form method="POST" enctype="multipart/form-data" th:action="@{/files/upload-multiple-files}">
+	    <input type="file" name="files" multiple> <br/><br/>
+	    <button type="submit">Submit</button>
+	</form>
+  </div>
+ </div>	
+	
+	
+	<h2>All Uploaded Files:</h2>
+	<ul>
+	    <li th:each="file : ${files}">
+	        <a th:href="${file}" target="_blank" th:text="${file}"></a>
+	    </li>
+	</ul>
+	<form method="POST" th:action="@{/files/merge}">
+	    <button type="submit">Merge</button>
+	</form>
+	
+	<hr/>
+</div>
+</body>
+</html>
