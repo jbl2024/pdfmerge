@@ -79,9 +79,9 @@ public class PdfService {
 	 */
 	public InputStream merge(final List<InputStream> sources) throws IOException, TikaException {
 
-		String title = "My title";
-		String creator = "Alexander Kriegisch";
-		String subject = "Subject with umlauts Ã„Ã–Ãœ";
+		String title = "Merged PDF";
+		String creator = "AC Lyon";
+		String subject = "Subject";
 
 		try (COSStream cosStream = new COSStream();
 				ByteArrayOutputStream mergedPDFOutputStream = new ByteArrayOutputStream()) {
