@@ -3,7 +3,6 @@ package fr.edu.lyon.pdfmerge.storage.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import fr.edu.lyon.pdfmerge.pdf.services.PdfService;
 import fr.edu.lyon.pdfmerge.storage.services.StorageService;
+import fr.edu.lyon.pdfmerge.storage.services.TempStorageService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FileController {
 
 	private StorageService storageService;
-
+	
 	@Autowired
 	PdfService pdfService;
 
@@ -97,5 +97,28 @@ public class FileController {
 				.body(resource);
 		
 	}
+	
+	@PostMapping("/upload-merge")
+	@ResponseBody
+	public ResponseEntity<Resource> uploadAndMerge(@RequestParam("files") MultipartFile[] files) throws IOException, TikaException {
+		List<File> items = new ArrayList<File>();
+		TempStorageService storage = new TempStorageService();
+		storage.init();
+		
+		for (MultipartFile file : files) {
+			items.add(storage.store(file));
+		}
+		
+		String filename = "output.pdf";
+		
+		InputStream mergedPdf = pdfService.merge(pdfService.normalizeSources(items));
+		InputStreamResource resource = new InputStreamResource(mergedPdf);
+		storage.destroy();
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+				.body(resource);
+	}
+	
 
 }

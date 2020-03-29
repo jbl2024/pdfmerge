@@ -32,6 +32,13 @@
 	    <button type="submit">Submit</button>
 	</form>
   </div>
+<div class="col">
+	<h4>Upload Multiple Files and merge:</h4>
+	<form method="POST" enctype="multipart/form-data" th:action="@{/files/upload-merge}">
+	    <input type="file" name="files" multiple> <br/><br/>
+	    <button type="submit">Submit</button>
+	</form>
+  </div>
  </div>	
 	
 	
