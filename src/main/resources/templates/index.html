@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Merge pdf</title>
+
+	<link rel="stylesheet" href="https://unpkg.com/wingcss"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+
+<body>
+
+<div class="typeset">
+
+	<h1>Merge pdf</h1>
+	
+	<h2>Upload Multiple Files and merge:</h2>
+	<form method="POST" enctype="multipart/form-data" th:action="@{/files/upload-merge}">
+	    <input type="file" name="files" multiple> <br/><br/>
+	    <button type="submit">Submit</button>
+	</form>
+</div>
+</body>
+</html>

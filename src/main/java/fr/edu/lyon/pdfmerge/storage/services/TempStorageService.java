@@ -13,14 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.edu.lyon.pdfmerge.storage.exceptions.StorageException;
+import fr.edu.lyon.pdfmerge.storage.services.exceptions.StorageException;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Data
-@Slf4j
-public class TempStorageService {
+public class TempStorageService implements StorageService {
 
 	Path rootLocation;
 
@@ -30,7 +28,7 @@ public class TempStorageService {
 			tempDirWithPrefix = Files.createTempDirectory(this.randomString());
 			setRootLocation(tempDirWithPrefix);
 		} catch (IOException e) {
-			log.error("Cannot create temp dir", e);
+			throw new StorageException("Failed to init store ", e);
 		}
 	}
 
@@ -38,7 +36,7 @@ public class TempStorageService {
 		try {
 			FileUtils.deleteDirectory(getRootLocation().toFile());
 		} catch (IOException e) {
-			log.error("Cannot delete temp dir", e);
+			throw new StorageException("Failed to destroy store ", e);
 		}
 
 	}

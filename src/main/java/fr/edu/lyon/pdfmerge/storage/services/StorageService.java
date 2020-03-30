@@ -1,22 +1,11 @@
 package fr.edu.lyon.pdfmerge.storage.services;
 
-import org.springframework.core.io.Resource;
+import java.io.File;
+
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.util.stream.Stream;
-
 public interface StorageService {
-
-    void init();
-
-    String store(MultipartFile file);
-
-    Stream<Path> loadAll();
-
-    Path load(String filename);
-
-    Resource loadAsResource(String filename);
-
-    void deleteAll();
+	void init();
+	void destroy();
+	public File store(MultipartFile file);
 }

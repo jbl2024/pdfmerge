@@ -1,4 +1,4 @@
-package fr.edu.lyon.pdfmerge.storage.exceptions;
+package fr.edu.lyon.pdfmerge.storage.services.exceptions;
 
 public class StorageException extends RuntimeException {
 
