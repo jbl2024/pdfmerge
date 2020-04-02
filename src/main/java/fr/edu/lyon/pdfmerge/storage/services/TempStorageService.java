@@ -3,9 +3,12 @@ package fr.edu.lyon.pdfmerge.storage.services;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -41,7 +44,7 @@ public class TempStorageService implements StorageService {
 
 	}
 
-	public File store(MultipartFile file) {
+	public File storeMultipartFile(MultipartFile file) {
 		String filename = StringUtils.cleanPath(file.getOriginalFilename());
 		try {
 			if (file.isEmpty()) {
@@ -64,5 +67,25 @@ public class TempStorageService implements StorageService {
 	private String randomString() {
 		UUID uuid = UUID.randomUUID();
 		return uuid.toString();
+	}
+
+	@Override
+	public File storeFileDescription(FileDescription fileDescription) {
+		if (fileDescription == null) {
+			return null;
+		}
+		byte[] data = Base64.getDecoder().decode(fileDescription.getContent());
+		String filename = fileDescription.filename;
+		if (filename.contains("..")) {
+			// This is a security check
+			throw new StorageException("Cannot store file with relative path outside current directory " + filename);
+		}
+		Path destinationFile = this.getRootLocation().resolve(filename);
+		try {
+			Files.write(destinationFile, data);
+			return this.getRootLocation().resolve(filename).toFile();
+		} catch (IOException e) {
+			throw new StorageException("Failed to store file " + filename, e);
+		}
 	}
 }
