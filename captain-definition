@@ -1,5 +1,5 @@
 {
-	"schemaVersion" :1 ,
+	"schemaVersion" : 2,
 	"dockerfileLines" : [
 		"FROM java:11",
 		"WORKDIR /app",
@@ -8,3 +8,4 @@
 		"CMD java -jar pdfmerge-0.0.1-SNAPSHOT.jar"
 	]
 }
+
