@@ -3,10 +3,8 @@ package fr.edu.lyon.pdfmerge.storage.services;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.UUID;
@@ -75,11 +73,7 @@ public class TempStorageService implements StorageService {
 			return null;
 		}
 		byte[] data = Base64.getDecoder().decode(fileDescription.getContent());
-		String filename = fileDescription.filename;
-		if (filename.contains("..")) {
-			// This is a security check
-			throw new StorageException("Cannot store file with relative path outside current directory " + filename);
-		}
+		String filename = randomString();
 		Path destinationFile = this.getRootLocation().resolve(filename);
 		try {
 			Files.write(destinationFile, data);

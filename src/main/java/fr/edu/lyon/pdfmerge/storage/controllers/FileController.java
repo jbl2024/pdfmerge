@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -76,6 +77,7 @@ public class FileController {
 
 	public ResponseEntity<Resource> uploadApi(@RequestBody String payload) throws IOException, TikaException {
 
+		List<FileDescription> fileDescriptions = new ArrayList<FileDescription>();
 		List<File> items = new ArrayList<File>();
 		StorageService storage = new TempStorageService();
 		storage.init();
@@ -90,11 +92,17 @@ public class FileController {
 				continue;
 			}
 			FileDescription fd = new FileDescription();
+			fd.setKey(element.getKey());
 			fd.setFilename(fileNode.get("filename").asText());
 			fd.setContent(fileNode.get("content").asText());
-			items.add(storage.storeFileDescription(fd));
+			fileDescriptions.add(fd);
 		}
-
+		
+		Collections.sort(fileDescriptions);
+		for (FileDescription fd : fileDescriptions) {
+			items.add(storage.storeFileDescription(fd));			
+		}
+		
 		InputStream mergedPdf = pdfService.merge(pdfService.normalizeSources(items));
 		InputStreamResource resource = new InputStreamResource(mergedPdf);
 		storage.destroy();
